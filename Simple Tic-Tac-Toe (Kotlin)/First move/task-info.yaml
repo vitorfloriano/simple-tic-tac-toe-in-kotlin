@@ -297,5 +297,18 @@ files:
     }
   learner_created: false
 feedback_link: https://hyperskill.org/learn/step/10478#comment
-status: Unchecked
+status: Failed
+feedback:
+  message: "Exception in test #1\n\njava.lang.IndexOutOfBoundsException: Index 1 out\
+    \ of bounds for length 1\n\tat java.base/jdk.internal.util.Preconditions.outOfBounds(Preconditions.java:64)\n\
+    \tat java.base/jdk.internal.util.Preconditions.outOfBoundsCheckIndex(Preconditions.java:70)\n\
+    \tat java.base/jdk.internal.util.Preconditions.checkIndex(Preconditions.java:266)\n\
+    \tat java.base/java.util.Objects.checkIndex(Objects.java:359)\n\tat java.base/java.util.ArrayList.get(ArrayList.java:427)\n\
+    \tat tictactoe.MainKt.makeUserMove(Main.kt:45)\n\tat tictactoe.MainKt.main(Main.kt:69)\n\
+    \tat tictactoe.MainKt.main(Main.kt)\n\nPlease find below the output of your program\
+    \ during this failed test.\nNote that the &#39;&gt;&#39; character indicates the\
+    \ beginning of the input line.\n\n---\n\n---------\n|       |\n|       |\n|  \
+    \     |\n---------\nEnter the coordinates (row column) for your move (1-3):\n\
+    &gt; _XXOO_OX_"
+  time: "Mon, 15 May 2023 00:51:56 UTC"
 record: -1
