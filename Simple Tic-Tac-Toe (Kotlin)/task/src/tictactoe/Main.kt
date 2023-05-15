@@ -1,83 +1,90 @@
 package tictactoe
 
-fun displayGrid(inputString: String) {
+fun printGrid(grid: Array<CharArray>) {
     println("---------")
-
-    for (rowIndex in 0 until 3) {
-        print("| ")
-        for (columnIndex in 0 until 3) {
-            val index = (rowIndex * 3) + columnIndex
-            val symbol = inputString.getOrNull(index) ?: '_'
-            print("$symbol ")
-        }
-        println("|")
+    for (row in grid) {
+        println("| ${row[0]} ${row[1]} ${row[2]} |")
     }
-
     println("---------")
 }
 
-fun printGameState(inputString: String) {
-    displayGrid(inputString)
-
-    val xCount = inputString.count { it == 'X' }
-    val oCount = inputString.count { it == 'O' }
-    val emptyCount = inputString.count { it == '_' }
-
-    val xWins = isWinningState(inputString, 'X')
-    val oWins = isWinningState(inputString, 'O')
-
-    if (xWins && oWins || Math.abs(xCount - oCount) >= 2) {
-        println("Impossible")
-    } else if (xWins) {
-        println("X wins")
-    } else if (oWins) {
-        println("O wins")
-    } else if (emptyCount == 0) {
-        println("Draw")
-    } else {
-        println("Game not finished")
-    }
-}
-
-fun isWinningState(inputString: String, symbol: Char): Boolean {
-    val rows = arrayOf(
-        intArrayOf(0, 1, 2),
-        intArrayOf(3, 4, 5),
-        intArrayOf(6, 7, 8)
-    )
-    val columns = arrayOf(
-        intArrayOf(0, 3, 6),
-        intArrayOf(1, 4, 7),
-        intArrayOf(2, 5, 8)
-    )
-    val diagonals = arrayOf(
-        intArrayOf(0, 4, 8),
-        intArrayOf(2, 4, 6)
-    )
-
-    for (row in rows) {
-        if (row.all { inputString[it] == symbol }) {
+fun checkWin(grid: Array<CharArray>, player: Char): Boolean {
+    // Check rows
+    for (row in grid) {
+        if (row.all { cell -> cell == player }) {
             return true
         }
     }
 
-    for (column in columns) {
-        if (column.all { inputString[it] == symbol }) {
+    // Check columns
+    for (col in 0 until 3) {
+        if (grid.all { row -> row[col] == player }) {
             return true
         }
     }
 
-    for (diagonal in diagonals) {
-        if (diagonal.all { inputString[it] == symbol }) {
-            return true
-        }
+    // Check diagonals
+    if (grid[0][0] == player && grid[1][1] == player && grid[2][2] == player) {
+        return true
+    }
+    if (grid[0][2] == player && grid[1][1] == player && grid[2][0] == player) {
+        return true
     }
 
     return false
 }
 
+fun checkDraw(grid: Array<CharArray>): Boolean {
+    return grid.all { row -> row.all { cell -> cell != ' ' } }
+}
+
+fun makeUserMove(grid: Array<CharArray>, currentPlayer: Char) {
+    var validMove = false
+    while (!validMove) {
+        println("Enter the coordinates (row column) for your move (1-3):")
+        val (row, col) = readLine()!!.split(" ").map { it.toIntOrNull() }
+
+        if (row == null || col == null) {
+            println("You should enter numbers!")
+        } else if (row !in 1..3 || col !in 1..3) {
+            println("Coordinates should be from 1 to 3!")
+        } else if (grid[row - 1][col - 1] != ' ') {
+            println("This cell is occupied! Choose another one!")
+        } else {
+            grid[row - 1][col - 1] = currentPlayer
+            validMove = true
+        }
+    }
+}
+
 fun main() {
-    print("> ")
-    val inputString = readLine()?.trim() ?: ""
-    printGameState(inputString)
+    val grid = Array(3) { CharArray(3) { ' ' } }
+    printGrid(grid)
+
+    var currentPlayer = 'X'
+    var gameWon = false
+    var draw = false
+
+    while (!gameWon && !draw) {
+        makeUserMove(grid, currentPlayer)
+        printGrid(grid)
+
+        if (checkWin(grid, currentPlayer)) {
+            gameWon = true
+            break
+        }
+
+        if (checkDraw(grid)) {
+            draw = true
+            break
+        }
+
+        currentPlayer = if (currentPlayer == 'X') 'O' else 'X'
+    }
+
+    if (gameWon) {
+        println("$currentPlayer wins")
+    } else if (draw) {
+        println("It's a draw!")
+    }
 }
